@@ -1,14 +1,23 @@
-﻿version: '3'
+﻿version: '2'
 
 services:
   db:
-    image: postgres
-  web:
-    build: .
-    command: python3 manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/code
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: juaciv
+      POSTGRES_PASSWORD: ickyvicky
+    restart: always
+    image: postgres:9.6
+    expose:
+      - "5432"
+  app:
+    environment:
+      DATABASE_URL: postgres://juaciv:ickyvicky@db/app_db
+      DJANGO_MANAGEPY_MIGRATE: on
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    links:
+      - db:db
     ports:
       - "8000:8000"
-    depends_on:
-      - db
