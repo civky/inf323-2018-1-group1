@@ -13,7 +13,6 @@ services:
   app:
     environment:
       DATABASE_URL: postgres://juaciv:ickyvicky@db/app_db
-      DJANGO_MANAGEPY_MIGRATE: on
     build:
       context: .
       dockerfile: ./Dockerfile
