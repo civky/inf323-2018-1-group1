@@ -47,4 +47,4 @@ ENV UWSGI_VIRTUALENV=/venv UWSGI_WSGI_FILE=my_project/wsgi.py UWSGI_HTTP=:8000 U
 RUN DATABASE_URL=none /venv/bin/python manage.py collectstatic --noinput
 
 # Start uWSGI
-CMD ["/my_project/wsgi", "--http-auto-chunked", "--http-keepalive"]
+CMD ["/venv/bin/uwsgi", "--http-auto-chunked", "--http-keepalive"]
