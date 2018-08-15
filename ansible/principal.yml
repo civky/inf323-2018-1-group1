@@ -31,5 +31,11 @@
          src: /etc/nginx/sites-available/django.conf
          dest: /etc/nginx/sites-enabled/django.conf
          state: link
-       become: yes     
+       become: yes
+     
+     - name: Docker compose (postgresql + django)  
+       shell: docker-compose up --build -d
+       args:
+         chdir: /srv/www/django/inf323-2018-1-group1/docker-compose.yml
+       become: True
        
