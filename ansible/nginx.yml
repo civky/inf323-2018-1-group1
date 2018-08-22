@@ -2,10 +2,13 @@
 - hosts: all
   become: true
   tasks:
-     - name: Add epel-release repo
-       yum: name: epel-release state: present
-         
-     - name: Install nginx
-       yum: name=nginx state=latest
-       
-       
+    - name: Add epel repo
+      yum_repository:
+        name: epel
+        description: EPEL YUM repo
+        baseurl: http://ftp.inf.utfsm.cl/epel/7/x86_64/
+
+    - name: Install nginx
+      yum:
+        name: http://nginx.org/packages/centos/7/x86_64/
+        state: present
