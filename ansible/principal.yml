@@ -2,40 +2,55 @@
 - hosts: principal
   become: true
   tasks:
-     - name: Install repo epel
-       yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm state=present
+    - name: Create directory - sites-available
+      file:
+        path: /etc/nginx/sites-available
+        state: directory
 
-     - name: Install nginx
-       yum: name=nginx state=latest
-       
-     - name: Create django-serverblock 
-       copy:
-         dest: /etc/nginx/sites-available/django.conf
-           content: |
-           error_log /var/log/nginx/main.error.log;
-           server {
-               listen  80;
-               server_name django.grupo01.mosorio.me;
+    - name: Create directory - sites-enabled
+      file:
+        path: /etc/nginx/sites-enabled
+        state: directory
+    
+    - name: Add conf-files from sites-enabled
+      lineinfile:
+        line: "include /etc/nginx/sites-enabled/*.conf;"
+        dest: "/etc/nginx/nginx.conf"
+    
+    - name: Create django-serverblock 
+     copy:
+       dest: /etc/nginx/sites-available/django.conf
+         content: |
+         error_log /var/log/nginx/main.error.log;
+         server {
+             listen  80;
+             server_name django.grupo01.mosorio.me;
 
-               location / {
-                   proxy_pass http://172.17.0.1:8000;
-                   proxy_set_header Host django.grupo01.mosorio.me;
-                   proxy_set_header X-Real-IP $remote_addr;
-                   proxy_set_header Accept-Encoding "";
-                    proxy_buffering off;
-              }
-           }
-         
-     - name: Create symlink
-       file:
-         src: /etc/nginx/sites-available/django.conf
-         dest: /etc/nginx/sites-enabled/django.conf
-         state: link
-       become: yes
-     
-     - name: Docker compose (postgresql + django)  
-       shell: docker-compose up --build -d
-       args:
-         chdir: /srv/www/django/inf323-2018-1-group1/docker-compose.yml
-       become: True
+             location / {
+                 proxy_pass http://172.17.0.1:8000;
+                 proxy_set_header Host django.grupo01.mosorio.me;
+                 proxy_set_header X-Real-IP $remote_addr;
+                 proxy_set_header Accept-Encoding "";
+                  proxy_buffering off;
+            }
+         }
        
+    - name: Create symlink
+     file:
+       src: /etc/nginx/sites-available/django.conf
+       dest: /etc/nginx/sites-enabled/django.conf
+       state: link
+     become: yes
+    
+    - name: Start nginx
+      service:
+        name: nginx
+        enabled: yes 
+        state: started
+      become: yes
+
+    - name: Docker compose (postgresql + django)  
+     shell: docker-compose up --build -d
+     args:
+       chdir: /srv/www/django/inf323-2018-1-group1/docker-compose.yml
+     become: True
