@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  	- name: Install IUS repo
+      yum:
+        name: https://centos7.iuscommunity.org/ius-release.rpm
+        state: present
+
+    - name: Install php-fpm
+      yum: 
+        name: php56u-fpm
+        state: latest
+
+    - name: Start php-fpm
+      service:
+        name: php-fpm
+        enabled: yes
+        state: restarted
+      become: yes
+
