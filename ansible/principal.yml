@@ -18,9 +18,9 @@
         dest: "/etc/nginx/nginx.conf"
     
     - name: Create django-serverblock 
-     copy:
-       dest: /etc/nginx/sites-available/django.conf
-         content: |
+      copy:
+        dest: /etc/nginx/sites-available/django.conf
+        content: |
          error_log /var/log/nginx/main.error.log;
          server {
              listen  80;
@@ -36,11 +36,11 @@
          }
        
     - name: Create symlink
-     file:
-       src: /etc/nginx/sites-available/django.conf
-       dest: /etc/nginx/sites-enabled/django.conf
-       state: link
-     become: yes
+      file:
+        src: /etc/nginx/sites-available/django.conf
+        dest: /etc/nginx/sites-enabled/django.conf
+        state: link
+      become: yes
     
     - name: Start nginx
       service:
@@ -50,7 +50,7 @@
       become: yes
 
     - name: Docker compose (postgresql + django)  
-     shell: docker-compose up --build -d
-     args:
-       chdir: /srv/www/django/inf323-2018-1-group1/docker-compose.yml
-     become: True
+      shell: docker-compose up --build -d
+      args:
+        chdir: /srv/www/django/inf323-2018-1-group1/docker-compose.yml
+      become: True
