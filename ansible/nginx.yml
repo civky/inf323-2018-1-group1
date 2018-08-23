@@ -10,5 +10,5 @@
 
     - name: Install nginx
       yum:
-        name: http://nginx.org/packages/centos/7/x86_64/
+        name: http://nginx.org/packages/centos/7/$basearch/
         state: present
